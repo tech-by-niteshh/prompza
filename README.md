@@ -1,6 +1,7 @@
 # Prompza — AI Prompt Library
 
-#[Visit prompza](https://prompza.onrender.com)
+#[Visit prompza](https://prompza.onrender.com).
+
 ##The live link is https://prompza.onrender.com/    or   click above 
 
 A full-stack web application for discovering, sharing, and managing AI prompts. Built with Express.js and MongoDB, served as a single deployable unit.
