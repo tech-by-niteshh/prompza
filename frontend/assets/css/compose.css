@@ -1,0 +1,25 @@
+.compose-helper,
+.compose-status {
+    margin: 0;
+}
+
+.compose-image-section {
+    margin-top: 20px;
+}
+
+.image-upload-preview {
+    display: grid;
+    place-items: center;
+    min-height: 320px;
+    overflow: hidden;
+    border: 1px dashed rgba(15, 82, 186, 0.24);
+    border-radius: 22px;
+    background: rgba(214, 230, 243, 0.3);
+}
+
+.image-upload-preview img {
+    display: block;
+    width: 100%;
+    max-height: 420px;
+    object-fit: contain;
+}

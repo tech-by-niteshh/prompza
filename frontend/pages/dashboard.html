@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prompza — Admin Dashboard</title>
+    <meta name="description" content="Admin dashboard for managing prompts, monitoring analytics, and controlling the Prompza platform.">
+    <link rel="icon" href="/frontend/assets/logo/bg-removed.png" type="image/png">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/frontend/assets/css/dashboard.css">
+</head>
+
+<body>
+    <div class="dash" id="admin-panel">
+
+        <!-- ─── Sidebar ─────────────────────────────────────────── -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar__top">
+                <div class="sidebar__brand">
+                    <div class="sidebar__logo">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="22" height="22"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+                    </div>
+                    <span class="sidebar__name">Prompza</span>
+                </div>
+
+                <nav class="sidebar__nav">
+                    <a href="/dashboard" class="sidebar__link sidebar__link--active" data-page="dashboard">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="18" height="18"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+                        <span>Dashboard</span>
+                    </a>
+                    <a href="/compose" class="sidebar__link" data-page="compose">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="18" height="18"><path d="M12 5v14M5 12h14"/></svg>
+                        <span>Compose</span>
+                    </a>
+                    <a href="/trending" class="sidebar__link" data-page="trending">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="18" height="18"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+                        <span>Trending</span>
+                    </a>
+                    <a href="/" class="sidebar__link" data-page="home">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="18" height="18"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+                        <span>Home</span>
+                    </a>
+                    <a href="/image" class="sidebar__link" data-page="image">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="18" height="18"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+                        <span>Images</span>
+                    </a>
+                </nav>
+            </div>
+
+            <div class="sidebar__bottom">
+                <a href="https://t.me/Prompza_bot" target="_blank" rel="noopener" class="sidebar__link">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="18" height="18"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                    <span>Telegram Bot</span>
+                </a>
+                <div class="sidebar__profile">
+                    <img src="/frontend/assets/icons/myImage.jpg" alt="Nitesh" class="sidebar__avatar">
+                    <div class="sidebar__profile-info">
+                        <span class="sidebar__profile-name">Nitesh</span>
+                        <span class="sidebar__profile-role">Admin</span>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- ─── Mobile Header ───────────────────────────────────── -->
+        <header class="mobile-header" id="mobile-header">
+            <button class="mobile-header__toggle" id="sidebar-toggle" aria-label="Toggle sidebar">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="22" height="22"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+            </button>
+            <span class="mobile-header__title">Prompza</span>
+            <img src="/frontend/assets/icons/myImage.jpg" alt="Nitesh" class="mobile-header__avatar">
+        </header>
+
+        <!-- ─── Main Content ────────────────────────────────────── -->
+        <main class="dash-main">
+            <div class="dash-content">
+
+                <!-- Top Bar -->
+                <div class="topbar">
+                    <div class="topbar__left">
+                        <h1 class="topbar__title">Dashboard</h1>
+                        <p class="topbar__sub">Welcome back, Nitesh — here's your platform overview.</p>
+                    </div>
+                    <div class="topbar__right">
+                        <span class="topbar__date" id="current-date"></span>
+                        <div class="topbar__status">
+                            <span class="topbar__dot"></span>
+                            <span>System Online</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ─── Metric Cards (Bento Row) ──────────────────── -->
+                <section class="bento-metrics" aria-label="Platform metrics">
+                    <article class="m-card m-card--accent">
+                        <div class="m-card__icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="22" height="22"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+                        </div>
+                        <div class="m-card__body">
+                            <span class="m-card__label">Total Prompts</span>
+                            <span class="m-card__value" id="metric-total-prompts">0</span>
+                        </div>
+                    </article>
+                    <article class="m-card m-card--blue">
+                        <div class="m-card__icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="22" height="22"><path d="M22 17H2a3 3 0 0 0 3-3V9a7 7 0 0 1 14 0v5a3 3 0 0 0 3 3zm-8.27 4a2 2 0 0 1-3.46 0"/></svg>
+                        </div>
+                        <div class="m-card__body">
+                            <span class="m-card__label">Saved Requests</span>
+                            <span class="m-card__value" id="metric-pending-requests">0</span>
+                        </div>
+                    </article>
+                    <article class="m-card m-card--emerald">
+                        <div class="m-card__icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="22" height="22"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                        </div>
+                        <div class="m-card__body">
+                            <span class="m-card__label">Messages</span>
+                            <span class="m-card__value" id="metric-active-users">0</span>
+                        </div>
+                    </article>
+                    <article class="m-card m-card--purple">
+                        <div class="m-card__icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="22" height="22"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                        </div>
+                        <div class="m-card__body">
+                            <span class="m-card__label">Users</span>
+                            <span class="m-card__value" id="metric-reviewed-today">0</span>
+                        </div>
+                    </article>
+                </section>
+
+                <!-- ─── Bento Grid ────────────────────────────────── -->
+                <section class="bento-grid">
+
+                    <!-- Latest Prompts Table (wide) -->
+                    <article class="b-card b-card--wide" id="latest-prompts-card">
+                        <div class="b-card__head">
+                            <div class="b-card__head-left">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="18" height="18"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+                                <h2>Latest Prompts</h2>
+                            </div>
+                            <a href="/compose" class="b-card__badge">+ New</a>
+                        </div>
+                        <div class="b-card__table-wrap">
+                            <table class="b-table">
+                                <thead>
+                                    <tr>
+                                        <th>Title</th>
+                                        <th>Category</th>
+                                        <th>Created</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="admin-prompts-body">
+                                    <tr><td colspan="3" class="b-table__empty">Loading prompts…</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </article>
+
+                    <!-- Quick Actions -->
+                    <article class="b-card">
+                        <div class="b-card__head">
+                            <div class="b-card__head-left">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="18" height="18"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+                                <h2>Quick Actions</h2>
+                            </div>
+                        </div>
+                        <ul class="action-list">
+                            <li>Create and save new prompts from compose page</li>
+                            <li>Review latest prompt submissions on the server</li>
+                            <li>Track total prompt count from MongoDB</li>
+                            <li>Main admin content overview</li>
+                        </ul>
+                        <div class="b-card__actions">
+                            <a class="btn btn--primary" href="/compose">Upload Prompt</a>
+                            <a class="btn btn--ghost" href="/trending">View Trending</a>
+                        </div>
+                    </article>
+
+                    <!-- Category Totals -->
+                    <article class="b-card" id="category-insights">
+                        <div class="b-card__head">
+                            <div class="b-card__head-left">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="18" height="18"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>
+                                <h2>Category Totals</h2>
+                            </div>
+                            <button class="b-card__badge b-card__badge--btn" id="load-category-totals" type="button">Load</button>
+                        </div>
+                        <p class="admin-status" id="category-status" aria-live="polite"></p>
+                        <div class="b-card__table-wrap">
+                            <table class="b-table">
+                                <thead>
+                                    <tr>
+                                        <th>Category</th>
+                                        <th>Prompts</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="category-totals-body">
+                                    <tr><td colspan="2" class="b-table__empty">Tap "Load" to fetch category data</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </article>
+
+                    <!-- Delete Prompt -->
+                    <article class="b-card b-card--danger" id="delete-prompt-section">
+                        <div class="b-card__head">
+                            <div class="b-card__head-left">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="18" height="18"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></svg>
+                                <h2>Delete Prompt</h2>
+                            </div>
+                        </div>
+                        <p class="b-card__desc">Permanently remove a prompt by ID. Use the <strong>Telegram Bot</strong> to find IDs.</p>
+                        <form class="b-form" id="delete-prompt-form">
+                            <div class="b-field">
+                                <label for="delete-prompt-id">Prompt ID</label>
+                                <input id="delete-prompt-id" type="text" placeholder="e.g. 6634f2a1c8b3e5001a2d4f7b" autocomplete="off" spellcheck="false">
+                            </div>
+                            <p class="admin-status" id="delete-prompt-status" aria-live="polite"></p>
+                            <button class="btn btn--danger" type="submit" id="delete-prompt-btn">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                                Delete Permanently
+                            </button>
+                        </form>
+                    </article>
+
+                    <!-- Bot Search Info -->
+                    <article class="b-card" id="bot-search-info">
+                        <div class="b-card__head">
+                            <div class="b-card__head-left">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="18" height="18"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                                <h2>Find Prompt IDs</h2>
+                            </div>
+                        </div>
+                        <ul class="action-list action-list--icons">
+                            <li><span class="action-emoji">📩</span> Send the prompt <strong>title</strong> to the bot</li>
+                            <li><span class="action-emoji">🔍</span> Bot replies with matching <strong>IDs</strong></li>
+                            <li><span class="action-emoji">📋</span> Copy ID and paste above to delete</li>
+                        </ul>
+                        <div class="b-card__actions">
+                            <a class="btn btn--ghost" href="https://t.me/Prompza_bot" target="_blank" rel="noopener">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                                Open Telegram Bot
+                            </a>
+                        </div>
+                    </article>
+
+                    <!-- Change Password (wide) -->
+                    <article class="b-card b-card--wide" id="password-settings">
+                        <div class="b-card__head">
+                            <div class="b-card__head-left">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="18" height="18"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                                <h2>Change Admin Password</h2>
+                            </div>
+                        </div>
+                        <form class="b-form b-form--row" id="change-password-form">
+                            <div class="b-field">
+                                <label for="old-password">Old Password</label>
+                                <input id="old-password" type="password" placeholder="Current password">
+                            </div>
+                            <div class="b-field">
+                                <label for="new-password">New Password</label>
+                                <input id="new-password" type="password" placeholder="New password">
+                            </div>
+                            <div class="b-field">
+                                <label for="confirm-password">Confirm Password</label>
+                                <input id="confirm-password" type="password" placeholder="Re-enter new password">
+                            </div>
+                            <div class="b-form__footer">
+                                <p class="admin-status" id="password-status" aria-live="polite"></p>
+                                <button class="btn btn--primary" type="submit">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                                    Update Password
+                                </button>
+                            </div>
+                        </form>
+                    </article>
+
+                </section>
+            </div>
+        </main>
+    </div>
+
+    <!-- Sidebar overlay for mobile -->
+    <div class="sidebar-overlay" id="sidebar-overlay"></div>
+
+    <script src="/frontend/assets/js/admin.js"></script>
+    <script src="/frontend/assets/js/admin-panel.js"></script>
+    <script>
+        // ─── Sidebar toggle (mobile) ──────────────────────────
+        (function () {
+            const sidebar = document.getElementById("sidebar");
+            const overlay = document.getElementById("sidebar-overlay");
+            const toggle = document.getElementById("sidebar-toggle");
+
+            function open() {
+                sidebar.classList.add("sidebar--open");
+                overlay.classList.add("visible");
+            }
+            function close() {
+                sidebar.classList.remove("sidebar--open");
+                overlay.classList.remove("visible");
+            }
+
+            if (toggle) toggle.addEventListener("click", open);
+            if (overlay) overlay.addEventListener("click", close);
+
+            // Current date
+            const dateEl = document.getElementById("current-date");
+            if (dateEl) {
+                dateEl.textContent = new Date().toLocaleDateString("en-IN", {
+                    weekday: "short",
+                    year: "numeric",
+                    month: "short",
+                    day: "numeric",
+                });
+            }
+        })();
+    </script>
+</body>
+
+</html>

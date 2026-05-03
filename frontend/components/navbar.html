@@ -1,0 +1,574 @@
+<style>
+    @import url("https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Syne:wght@700;800&display=swap");
+     :root {
+        --clr-navy: #001f3f;
+        --clr-navy-dark: #001428;
+        --clr-accent: #00cfff;
+        --clr-accent-dim: rgba(0, 207, 255, 0.15);
+        --clr-white: #ffffff;
+        --clr-white-70: rgba(255, 255, 255, 0.7);
+        --clr-white-10: rgba(255, 255, 255, 0.08);
+        --font-logo: "Syne", sans-serif;
+        --font-nav: "DM Sans", sans-serif;
+        --navbar-height: 68px;
+        --transition: 0.3s ease;
+        --radius-pill: 50px;
+    }
+    
+    .navbar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        z-index: 1000;
+        background: var(--clr-navy);
+        border-top: 2px solid var(--clr-accent);
+        box-shadow: 0 4px 32px rgba(0, 0, 0, 0.45);
+        transition: background var(--transition), box-shadow var(--transition);
+    }
+    
+    .navbar.scrolled {
+        background: rgba(0, 20, 40, 0.97);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        box-shadow: 0 6px 40px rgba(0, 0, 0, 0.65);
+    }
+    
+    .navbar__container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 24px;
+        height: var(--navbar-height);
+        display: flex;
+        align-items: center;
+        gap: 32px;
+    }
+    
+    .navbar__logo {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        white-space: nowrap;
+        flex-shrink: 0;
+        transition: opacity var(--transition);
+    }
+    
+    .navbar__logo:hover {
+        opacity: 0.85;
+    }
+    
+    .navbar__logo-img-wrap {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 40px;
+        height: 40px;
+        border-radius: 10px;
+        background: var(--clr-accent-dim);
+        border: 1.5px solid rgba(0, 207, 255, 0.3);
+        overflow: hidden;
+        flex-shrink: 0;
+    }
+    
+    .navbar__logo-img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+    }
+    
+    .navbar__logo-text {
+        display: flex;
+        flex-direction: column;
+        line-height: 1;
+        gap: 3px;
+    }
+    
+    .navbar__logo-brand {
+        font-family: var(--font-logo);
+        font-size: 1.1rem;
+        font-weight: 800;
+        letter-spacing: -0.4px;
+        color: var(--clr-white);
+    }
+    
+    .navbar__logo-brand-bracket {
+        color: var(--clr-accent);
+    }
+    
+    .navbar__logo-tagline {
+        font-family: var(--font-nav);
+        font-size: 0.6rem;
+        font-weight: 500;
+        letter-spacing: 0.8px;
+        color: var(--clr-accent);
+        text-transform: uppercase;
+        opacity: 0.75;
+    }
+    
+    .navbar__nav {
+        margin-left: auto;
+    }
+    
+    .navbar__links {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        list-style: none;
+    }
+    
+    .navbar__link {
+        position: relative;
+        font-family: var(--font-nav);
+        font-size: 0.9rem;
+        font-weight: 500;
+        color: var(--clr-white-70);
+        padding: 8px 14px;
+        border-radius: 8px;
+        text-decoration: none;
+        transition: color var(--transition), background var(--transition);
+    }
+    
+    .navbar__link::after {
+        content: "";
+        position: absolute;
+        bottom: 4px;
+        left: 14px;
+        right: 14px;
+        height: 2px;
+        border-radius: 2px;
+        background: var(--clr-accent);
+        transform: scaleX(0);
+        transform-origin: center;
+        transition: transform var(--transition);
+    }
+    
+    .navbar__link:hover {
+        color: var(--clr-white);
+        background: var(--clr-white-10);
+    }
+    
+    .navbar__link:hover::after,
+    .navbar__link.active::after {
+        transform: scaleX(1);
+    }
+    
+    .navbar__link.active {
+        color: var(--clr-white);
+        background: var(--clr-accent-dim);
+    }
+    
+    .navbar__search {
+        margin-left: 12px;
+        min-width: 280px;
+        flex-shrink: 0;
+    }
+
+    .navbar__search-form {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 6px;
+        border-radius: var(--radius-pill);
+        background: rgba(255, 255, 255, 0.08);
+        border: 1px solid rgba(0, 207, 255, 0.18);
+    }
+
+    .navbar__search-input {
+        width: 100%;
+        border: 0;
+        outline: none;
+        background: transparent;
+        color: var(--clr-white);
+        padding: 8px 12px;
+        font-family: var(--font-nav);
+        font-size: 0.9rem;
+    }
+
+    .navbar__search-input::placeholder {
+        color: var(--clr-white-70);
+    }
+
+    .navbar__search-button {
+        border: 0;
+        border-radius: var(--radius-pill);
+        background: var(--clr-accent);
+        color: var(--clr-navy);
+        padding: 9px 16px;
+        font-family: var(--font-nav);
+        font-size: 0.84rem;
+        font-weight: 700;
+        white-space: nowrap;
+        transition: background var(--transition), transform var(--transition), box-shadow var(--transition);
+    }
+
+    .navbar__search-button:hover {
+        background: #33d9ff;
+        transform: translateY(-1px);
+        box-shadow: 0 4px 20px rgba(0, 207, 255, 0.4);
+    }
+    
+    .navbar__hamburger {
+        display: none;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        gap: 5px;
+        width: 42px;
+        height: 42px;
+        border: 0;
+        border-radius: 8px;
+        margin-left: auto;
+        padding: 4px;
+        background: transparent;
+        transition: background var(--transition);
+    }
+    
+    .navbar__hamburger:hover {
+        background: var(--clr-white-10);
+    }
+    
+    .navbar__hamburger-bar {
+        display: block;
+        width: 22px;
+        height: 2px;
+        border-radius: 2px;
+        background: var(--clr-white);
+        transition: transform var(--transition), opacity var(--transition), width var(--transition);
+        transform-origin: center;
+    }
+    
+    .navbar__hamburger[aria-expanded="true"] .navbar__hamburger-bar:nth-child(1) {
+        transform: translateY(7px) rotate(45deg);
+    }
+    
+    .navbar__hamburger[aria-expanded="true"] .navbar__hamburger-bar:nth-child(2) {
+        opacity: 0;
+        width: 0;
+    }
+    
+    .navbar__hamburger[aria-expanded="true"] .navbar__hamburger-bar:nth-child(3) {
+        transform: translateY(-7px) rotate(-45deg);
+    }
+    
+    .navbar__mobile {
+        max-height: 0;
+        overflow: hidden;
+        background: var(--clr-navy-dark);
+        border-top: 1px solid rgba(0, 207, 255, 0.12);
+        opacity: 0;
+        transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s ease;
+    }
+    
+    .navbar__mobile.open {
+        max-height: 420px;
+        opacity: 1;
+    }
+    
+    .navbar__mobile-links {
+        display: flex;
+        flex-direction: column;
+        padding: 16px 24px 8px;
+        gap: 2px;
+        list-style: none;
+    }
+    
+    .navbar__mobile-link {
+        font-family: var(--font-nav);
+        font-size: 1rem;
+        font-weight: 500;
+        color: var(--clr-white-70);
+        padding: 13px 16px;
+        border-radius: 10px;
+        opacity: 0;
+        transform: translateX(-12px);
+        transition: color var(--transition), background var(--transition), transform var(--transition), opacity var(--transition);
+    }
+    
+    .navbar__mobile.open .navbar__mobile-link {
+        opacity: 1;
+        transform: translateX(0);
+    }
+    
+    .navbar__mobile.open .navbar__mobile-link:nth-child(1) {
+        transition-delay: 0.05s;
+    }
+    
+    .navbar__mobile.open .navbar__mobile-link:nth-child(2) {
+        transition-delay: 0.1s;
+    }
+    
+    .navbar__mobile.open .navbar__mobile-link:nth-child(3) {
+        transition-delay: 0.15s;
+    }
+    
+    .navbar__mobile.open .navbar__mobile-link:nth-child(4) {
+        transition-delay: 0.2s;
+    }
+
+    .navbar__mobile.open .navbar__mobile-link:nth-child(5) {
+        transition-delay: 0.25s;
+    }
+    
+    .navbar__mobile-link:hover {
+        color: var(--clr-white);
+        background: var(--clr-white-10);
+        transform: translateX(4px);
+    }
+    
+    .navbar__mobile-link.active {
+        color: var(--clr-accent);
+        background: var(--clr-accent-dim);
+    }
+    
+    .navbar__mobile-search {
+        padding: 12px 24px 20px;
+        opacity: 0;
+        transition: opacity var(--transition);
+    }
+
+    .navbar__mobile.open .navbar__mobile-search {
+        opacity: 1;
+        transition-delay: 0.25s;
+    }
+
+    .navbar__mobile-search .navbar__search-form {
+        width: 100%;
+    }
+
+    .navbar__mobile-panel {
+        display: none;
+    }
+    
+    @media (max-width: 768px) {
+        .navbar__nav,
+        .navbar__search,
+        .navbar__hamburger,
+        .navbar__mobile {
+            display: none;
+        }
+
+        .navbar__container {
+            height: auto;
+            padding: 12px 16px 8px;
+            gap: 12px;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .navbar__logo {
+            width: auto;
+            justify-content: flex-start;
+            flex-direction: row;
+            gap: 8px;
+            text-align: left;
+            flex: 0 1 auto;
+        }
+
+        .navbar__logo-text {
+            align-items: flex-start;
+        }
+
+        .navbar__logo-tagline {
+            letter-spacing: 0.5px;
+        }
+
+        .navbar__mobile-panel {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            padding: 0 16px 14px;
+        }
+
+        .navbar__mobile-panel > div[role="search"] {
+            order: -1;
+        }
+
+        .navbar__mobile-panel .navbar__search-form {
+            width: 100%;
+            margin-left: auto;
+        }
+
+        .navbar__mobile-links-inline {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
+
+        .navbar__mobile-links-inline li {
+            flex: 1 1 auto;
+            min-width: 0;
+        }
+
+        .navbar__mobile-links-inline .navbar__mobile-link {
+            opacity: 1;
+            transform: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 38px;
+            padding: 8px 10px;
+            background: rgba(255, 255, 255, 0.08);
+            text-align: center;
+            font-size: 0.85rem;
+            line-height: 1.1;
+            white-space: nowrap;
+        }
+
+        .navbar__mobile-panel .navbar__mobile-link:hover,
+        .navbar__mobile-panel .navbar__mobile-link.active {
+            transform: none;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .navbar__container {
+            padding: 12px 14px 8px;
+            gap: 10px;
+        }
+
+        .navbar__logo {
+            justify-content: flex-start;
+            min-width: 0;
+        }
+
+        .navbar__logo-text {
+            min-width: 0;
+            align-items: flex-start;
+        }
+
+        .navbar__logo-brand {
+            font-size: 0.96rem;
+        }
+
+        .navbar__logo-tagline {
+            font-size: 0.55rem;
+        }
+
+        .navbar__mobile-panel {
+            padding: 0 14px 14px;
+            gap: 8px;
+        }
+
+        .navbar__mobile-panel .navbar__search-form {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) auto;
+            align-items: center;
+        }
+
+        .navbar__mobile-links-inline {
+            gap: 6px;
+        }
+
+        .navbar__mobile-links-inline .navbar__mobile-link {
+            min-height: 36px;
+            padding: 8px 8px;
+            font-size: 0.78rem;
+        }
+
+        .navbar__search-form {
+            border-radius: 18px;
+        }
+
+        .navbar__search-input {
+            padding: 8px 10px;
+            font-size: 0.84rem;
+        }
+
+        .navbar__search-button {
+            padding: 8px 12px;
+            font-size: 0.78rem;
+        }
+    }
+    
+    @media (min-width: 769px) and (max-width: 1024px) {
+        .navbar__link {
+            padding: 8px 10px;
+            font-size: 0.85rem;
+        }
+        .navbar__search {
+            min-width: 220px;
+        }
+        .navbar__container {
+            gap: 16px;
+        }
+    }
+</style>
+
+<header class="navbar" id="site-navbar" role="banner">
+    <div class="navbar__container">
+        <a href="/" class="navbar__logo" aria-label="prompza home">
+            <div class="navbar__logo-img-wrap">
+                <img src="/frontend/assets/logo/logo.png" alt="prompza logo" class="navbar__logo-img" onerror="this.style.display='none'" />
+            </div>
+
+            <div class="navbar__logo-text">
+                <span class="navbar__logo-brand">
+                    <span class="navbar__logo-brand-bracket">{</span>prompza<span class="navbar__logo-brand-bracket">}</span>
+                </span>
+                <span class="navbar__logo-tagline">AI Prompt Library</span>
+            </div>
+        </a>
+
+        <nav class="navbar__nav" aria-label="Main navigation">
+            <ul class="navbar__links">
+                <li><a href="/" class="navbar__link" data-page="index">Home</a></li>
+                <li><a href="/trending" class="navbar__link" data-page="trending">Trending</a></li>
+                <li><a href="/image" class="navbar__link" data-page="image">Images</a></li>
+                <li><a href="/about" class="navbar__link" data-page="about">About Us</a></li>
+                <li><a href="/contact" class="navbar__link" data-page="contact">Contact Us</a></li>
+            </ul>
+        </nav>
+
+        <div class="navbar__search" role="search">
+            <form class="navbar__search-form" action="/post" method="get">
+                <input class="navbar__search-input" type="search" name="q" placeholder="Search prompts" aria-label="Search prompts">
+                <button class="navbar__search-button" type="submit">Search</button>
+            </form>
+        </div>
+
+        <button class="navbar__hamburger" id="hamburgerBtn" aria-label="Toggle mobile menu" aria-expanded="false" aria-controls="mobileMenu">
+            <span class="navbar__hamburger-bar"></span>
+            <span class="navbar__hamburger-bar"></span>
+            <span class="navbar__hamburger-bar"></span>
+        </button>
+    </div>
+
+    <div class="navbar__mobile-panel" aria-label="Mobile quick navigation">
+        <ul class="navbar__mobile-links-inline">
+            <li><a href="/" class="navbar__mobile-link" data-page="index">Home</a></li>
+            <li><a href="/trending" class="navbar__mobile-link" data-page="trending">Trending</a></li>
+            <li><a href="/image" class="navbar__mobile-link" data-page="image">Images</a></li>
+            <li><a href="/about" class="navbar__mobile-link" data-page="about">About Us</a></li>
+            <li><a href="/contact" class="navbar__mobile-link" data-page="contact">Contact Us</a></li>
+        </ul>
+
+        <div role="search">
+            <form class="navbar__search-form" action="/post" method="get">
+                <input class="navbar__search-input" type="search" name="q" placeholder="Search prompts" aria-label="Search prompts">
+                <button class="navbar__search-button" type="submit">Search</button>
+            </form>
+        </div>
+    </div>
+
+    <div class="navbar__mobile" id="mobileMenu" aria-label="Mobile navigation" aria-hidden="true">
+        <nav>
+            <ul class="navbar__mobile-links">
+                <li><a href="/" class="navbar__mobile-link" data-page="index">Home</a></li>
+                <li><a href="/trending" class="navbar__mobile-link" data-page="trending">Trending</a></li>
+                <li><a href="/image" class="navbar__mobile-link" data-page="image">Images</a></li>
+                <li><a href="/about" class="navbar__mobile-link" data-page="about">About Us</a></li>
+                <li><a href="/contact" class="navbar__mobile-link" data-page="contact">Contact Us</a></li>
+            </ul>
+            <div class="navbar__mobile-search" role="search">
+                <form class="navbar__search-form" action="/post" method="get">
+                    <input class="navbar__search-input" type="search" name="q" placeholder="Search prompts" aria-label="Search prompts">
+                    <button class="navbar__search-button" type="submit">Search</button>
+                </form>
+            </div>
+        </nav>
+    </div>
+</header>

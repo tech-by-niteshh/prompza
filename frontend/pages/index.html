@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prompza</title>
+    <link rel="icon" href="/frontend/assets/logo/bg-removed.png" type="image/png">
+    <link rel="stylesheet" href="/frontend/assets/css/site.css">
+    <link rel="stylesheet" href="/frontend/assets/css/index.css">
+</head>
+
+<body>
+    <div class="page-shell">
+        <div id="navbar-placeholder"></div>
+
+        <main class="page-main">
+            <h1 class="page-heading" id="home-title">Explore our new prompts</h1>
+
+            <section class="card prompt-showcase" aria-labelledby="latest-prompts-title">
+                <div class="prompt-showcase__header">
+                    <h2 class="prompt-showcase__title" id="latest-prompts-title">Newest Uploads</h2>
+                    <p class="prompt-showcase__status" id="latest-prompts-status">Loading prompt cards...</p>
+                </div>
+
+                <div class="prompt-showcase__grid" id="latest-prompts-grid" aria-live="polite"></div>
+            </section>
+        </main>
+
+        <div id="footer-placeholder"></div>
+    </div>
+
+    <script src="/frontend/assets/js/components.js"></script>
+    <script src="/frontend/assets/js/site.js"></script>
+    <script>
+        (function () {
+            const grid = document.getElementById("latest-prompts-grid");
+            const status = document.getElementById("latest-prompts-status");
+
+            function buildPromptText(prompt) {
+                return String(prompt.goal || "").trim();
+            }
+
+            function buildCardBody(prompt) {
+                const details = [prompt.category, prompt.tone].filter(Boolean);
+
+                if (!details.length) {
+                    return "Freshly uploaded prompt ready to copy and use.";
+                }
+
+                return details.join(" • ");
+            }
+
+            async function loadLatestPrompts() {
+                try {
+                    const response = await fetch("/api/prompts");
+
+                    if (!response.ok) {
+                        throw new Error("Failed to fetch prompts.");
+                    }
+
+                    const data = await response.json();
+                    const prompts = Array.isArray(data.prompts) ? data.prompts.slice(0, 10) : [];
+
+                    grid.innerHTML = "";
+
+                    if (!prompts.length) {
+                        status.textContent = "No prompt cards uploaded yet.";
+                        grid.innerHTML = '<div class="prompt-showcase__empty">Upload prompts from Compose and the 10 newest cards will appear here.</div>';
+                        return;
+                    }
+
+                    status.textContent = `Showing ${prompts.length} newest prompt card${prompts.length === 1 ? "" : "s"}.`;
+
+                    const cards = await Promise.all(prompts.map((prompt) => {
+                        return window.prompzaSite.createPromptCard({
+                            id: prompt._id,
+                            likes: prompt.likes || 0,
+                            category: prompt.category || "General",
+                            title: prompt.title || "Untitled Prompt",
+                            body: buildCardBody(prompt),
+                            prompt: buildPromptText(prompt),
+                        });
+                    }));
+
+                    cards.forEach((card) => {
+                        grid.appendChild(card);
+                    });
+                } catch (_error) {
+                    status.textContent = "The newest prompt cards could not be loaded right now.";
+                    grid.innerHTML = '<div class="prompt-showcase__empty">Please try again after the server and database are running.</div>';
+                } finally {
+                    window.dispatchEvent(new CustomEvent("prompza:loader-complete"));
+                }
+            }
+
+            if (document.readyState === "loading") {
+                document.addEventListener("DOMContentLoaded", loadLatestPrompts);
+            } else {
+                loadLatestPrompts();
+            }
+        })();
+    </script>
+</body>
+
+</html>

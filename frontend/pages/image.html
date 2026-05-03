@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prompza Image Prompts</title>
+    <link rel="icon" href="/frontend/assets/logo/bg-removed.png" type="image/png">
+    <link rel="stylesheet" href="/frontend/assets/css/site.css">
+    <link rel="stylesheet" href="/frontend/assets/css/image.css">
+</head>
+
+<body>
+    <div class="page-shell">
+        <div id="navbar-placeholder"></div>
+
+        <main class="page-main">
+            <section class="page-hero image-hero">
+                <span class="eyebrow">Image Prompts</span>
+                <h1 class="page-title">Image generation prompts with visuals.</h1>
+                <p class="page-lead">
+                    Browse uploaded image prompt examples. Each card keeps the
+                    reference image first and the generation prompt directly
+                    below it.
+                </p>
+            </section>
+
+            <section class="image-prompt-section" aria-labelledby="image-prompts-title">
+                <div class="image-prompt-section__header">
+                    <h2 id="image-prompts-title">Uploaded Image Prompts</h2>
+                    <p id="image-prompts-status" class="text-muted">Loading image prompts...</p>
+                </div>
+                <div class="image-prompt-grid" id="image-prompts-grid" aria-live="polite"></div>
+            </section>
+        </main>
+
+        <div id="footer-placeholder"></div>
+    </div>
+
+    <script src="/frontend/assets/js/components.js"></script>
+    <script src="/frontend/assets/js/site.js"></script>
+    <script>
+        (function () {
+            const grid = document.getElementById("image-prompts-grid");
+            const status = document.getElementById("image-prompts-status");
+            const params = new URLSearchParams(window.location.search);
+            const query = String(params.get("q") || "").trim();
+
+            function createImagePromptCard(prompt) {
+                const card = document.createElement("article");
+                card.className = "image-prompt-card";
+
+                const image = document.createElement("img");
+                image.className = "image-prompt-card__image";
+                image.src = prompt.imageUrl;
+                image.alt = prompt.title || "Uploaded image prompt";
+                image.loading = "lazy";
+
+                const body = document.createElement("div");
+                body.className = "image-prompt-card__body";
+
+                const title = document.createElement("h2");
+                title.textContent = prompt.title || "Untitled Image Prompt";
+
+                const promptText = document.createElement("p");
+                promptText.className = "image-prompt-card__prompt";
+                promptText.textContent = prompt.imagePrompt || prompt.goal || "";
+
+                const actions = document.createElement("div");
+                actions.className = "image-prompt-card__actions";
+
+                const copyWrap = document.createElement("div");
+                copyWrap.className = "image-prompt-card__copy-wrap";
+
+                const copyStatus = document.createElement("span");
+                copyStatus.className = "image-prompt-card__copy-status";
+                copyStatus.setAttribute("aria-live", "polite");
+                copyStatus.textContent = "Copied";
+
+                const copyBtn = document.createElement("button");
+                copyBtn.className = "image-prompt-card__copy";
+                copyBtn.type = "button";
+                copyBtn.setAttribute("aria-label", "Copy prompt");
+                copyBtn.innerHTML = `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                    <path d="M9 9.75A2.25 2.25 0 0 1 11.25 7.5h6A2.25 2.25 0 0 1 19.5 9.75v7.5a2.25 2.25 0 0 1-2.25 2.25h-6A2.25 2.25 0 0 1 9 17.25v-7.5Z" stroke="currentColor" stroke-width="1.5"/>
+                    <path d="M6.75 16.5A2.25 2.25 0 0 1 4.5 14.25v-7.5A2.25 2.25 0 0 1 6.75 4.5h6.75" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                </svg>`;
+
+                let statusTimer;
+                copyBtn.addEventListener("click", async () => {
+                    const textToCopy = prompt.imagePrompt || prompt.goal || "";
+                    try {
+                        await navigator.clipboard.writeText(textToCopy);
+                    } catch (_err) {
+                        const tempArea = document.createElement("textarea");
+                        tempArea.value = textToCopy;
+                        tempArea.style.position = "fixed";
+                        tempArea.style.opacity = "0";
+                        document.body.appendChild(tempArea);
+                        tempArea.select();
+                        document.execCommand("copy");
+                        document.body.removeChild(tempArea);
+                    }
+                    copyStatus.classList.add("visible");
+                    clearTimeout(statusTimer);
+                    statusTimer = setTimeout(() => {
+                        copyStatus.classList.remove("visible");
+                    }, 1400);
+                });
+
+                copyWrap.append(copyStatus, copyBtn);
+                actions.append(copyWrap);
+                body.append(title, promptText, actions);
+                card.append(image, body);
+
+                return card;
+            }
+
+            async function loadImagePrompts() {
+                try {
+                    const endpoint = query
+                        ? `/api/image-prompts/search?q=${encodeURIComponent(query)}`
+                        : "/api/image-prompts";
+                    const response = await fetch(endpoint);
+
+                    if (!response.ok) {
+                        throw new Error("Failed to fetch image prompts.");
+                    }
+
+                    const data = await response.json();
+                    const imagePrompts = Array.isArray(data.prompts) ? data.prompts.slice(0, 24) : [];
+
+                    grid.innerHTML = "";
+
+                    if (!imagePrompts.length) {
+                        status.textContent = query
+                            ? `No image prompts found for "${query}".`
+                            : "No image prompts uploaded yet.";
+                        grid.innerHTML = query
+                            ? '<div class="image-prompt-empty">Try another image prompt keyword.</div>'
+                            : '<div class="image-prompt-empty">Upload an image prompt from Compose and it will appear here.</div>';
+                        return;
+                    }
+
+                    status.textContent = query
+                        ? `Showing ${imagePrompts.length} image prompt result${imagePrompts.length === 1 ? "" : "s"} for "${query}".`
+                        : `Showing ${imagePrompts.length} image prompt${imagePrompts.length === 1 ? "" : "s"}.`;
+
+                    imagePrompts.forEach((prompt) => {
+                        grid.appendChild(createImagePromptCard(prompt));
+                    });
+                } catch (_error) {
+                    status.textContent = "Image prompts could not be loaded right now.";
+                    grid.innerHTML = '<div class="image-prompt-empty">Please try again after the server and database are running.</div>';
+                } finally {
+                    window.dispatchEvent(new CustomEvent("prompza:loader-complete"));
+                }
+            }
+
+            if (document.readyState === "loading") {
+                document.addEventListener("DOMContentLoaded", loadImagePrompts);
+            } else {
+                loadImagePrompts();
+            }
+        })();
+    </script>
+</body>
+
+</html>

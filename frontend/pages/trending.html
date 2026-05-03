@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prompza Trending</title>
+    <link rel="icon" href="/frontend/assets/logo/bg-removed.png" type="image/png">
+    <link rel="stylesheet" href="/frontend/assets/css/site.css">
+    <link rel="stylesheet" href="/frontend/assets/css/trending.css">
+</head>
+
+<body>
+    <div class="page-shell">
+        <div id="navbar-placeholder"></div>
+
+        <main class="page-main">
+            <h1 class="page-heading" id="trending-title">Explore our new prompts</h1>
+
+            <section class="card trending-panel" aria-labelledby="trending-grid-title">
+                <div class="trending-panel__top">
+                    <h2 class="trending-panel__title" id="trending-grid-title">Trending Prompt Cards</h2>
+                    <p class="trending-panel__status" id="trending-status">Loading most liked prompts...</p>
+                </div>
+
+                <div class="trending-grid" id="trending-grid" aria-live="polite"></div>
+
+                <div class="trending-load-more-row">
+                    <button class="button trending-load-more" id="trending-load-more" type="button" hidden>
+                        Show More
+                    </button>
+                </div>
+            </section>
+        </main>
+
+        <div id="footer-placeholder"></div>
+    </div>
+
+    <script src="/frontend/assets/js/components.js"></script>
+    <script src="/frontend/assets/js/site.js"></script>
+    <script>
+        (() => {
+            const grid = document.getElementById("trending-grid");
+            const status = document.getElementById("trending-status");
+            const loadMoreBtn = document.getElementById("trending-load-more");
+            const PAGE_SIZE = 4;
+            const FETCH_LIMIT = 20;
+
+            let allCards = [];
+            let visibleCount = 0;
+
+            if (!grid || !status || !loadMoreBtn) {
+                return;
+            }
+
+            function buildPromptText(prompt) {
+                return String(prompt.goal || "").trim();
+            }
+
+            function buildCardBody(prompt) {
+                const details = [];
+
+                if (prompt.likes) {
+                    details.push(`${prompt.likes} like${prompt.likes === 1 ? "" : "s"}`);
+                }
+
+                if (prompt.tone) {
+                    details.push(prompt.tone);
+                }
+
+                if (prompt.category) {
+                    details.push(prompt.category);
+                }
+
+                if (details.length) {
+                    return details.join(" • ");
+                }
+
+                return "Trending prompt ready to copy and use.";
+            }
+
+            function renderEmpty(message) {
+                status.textContent = message;
+                loadMoreBtn.hidden = true;
+                grid.innerHTML = `
+                    <div class="trending-empty">
+                        <strong>No trending prompts yet.</strong>
+                        <p class="trending-empty__message">Once people start liking prompt cards, the most liked ones will appear here automatically.</p>
+                    </div>
+                `;
+            }
+
+            function showCards() {
+                const nextBatch = allCards.slice(visibleCount, visibleCount + PAGE_SIZE);
+
+                nextBatch.forEach((card) => {
+                    grid.appendChild(card);
+                });
+
+                visibleCount += nextBatch.length;
+
+                const remaining = allCards.length - visibleCount;
+
+                if (remaining > 0) {
+                    loadMoreBtn.hidden = false;
+                    loadMoreBtn.textContent = `Show More (${remaining} left)`;
+                } else {
+                    loadMoreBtn.hidden = true;
+                }
+
+                status.textContent = `Showing ${visibleCount} of ${allCards.length} most liked prompt${allCards.length === 1 ? "" : "s"}.`;
+            }
+
+            async function renderTrendingPrompts() {
+                try {
+                    const response = await fetch(`/api/prompts/trending?limit=${FETCH_LIMIT}`);
+
+                    if (!response.ok) {
+                        throw new Error("Failed to fetch trending prompts.");
+                    }
+
+                    const data = await response.json();
+                    const prompts = Array.isArray(data.prompts) ? data.prompts : [];
+
+                    grid.innerHTML = "";
+                    allCards = [];
+                    visibleCount = 0;
+                    loadMoreBtn.hidden = true;
+
+                    if (!prompts.length) {
+                        renderEmpty("No prompts are available for trending yet.");
+                        return;
+                    }
+
+                    allCards = await Promise.all(prompts.map((prompt) => {
+                        return window.prompzaSite.createPromptCard({
+                            id: prompt._id,
+                            likes: prompt.likes || 0,
+                            category: prompt.category || "General",
+                            title: prompt.title || "Untitled Prompt",
+                            body: buildCardBody(prompt),
+                            prompt: buildPromptText(prompt),
+                        });
+                    }));
+
+                    // Show first batch of 4
+                    showCards();
+                } catch (_error) {
+                    renderEmpty("Trending prompts could not be loaded right now.");
+                } finally {
+                    window.dispatchEvent(new CustomEvent("prompza:loader-complete"));
+                }
+            }
+
+            loadMoreBtn.addEventListener("click", showCards);
+            window.addEventListener("prompza:prompt-liked", renderTrendingPrompts);
+
+            if (window.prompzaSite && typeof window.prompzaSite.createPromptCard === "function") {
+                renderTrendingPrompts();
+            } else {
+                window.addEventListener("load", renderTrendingPrompts, { once: true });
+            }
+        })();
+    </script>
+</body>
+
+</html>

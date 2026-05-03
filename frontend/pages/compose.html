@@ -1,0 +1,209 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Prompza Compose</title>
+    <link
+      rel="icon"
+      href="/frontend/assets/logo/bg-removed.png"
+      type="image/png"
+    />
+    <link rel="stylesheet" href="/frontend/assets/css/site.css" />
+    <link rel="stylesheet" href="/frontend/assets/css/compose.css" />
+  </head>
+
+  <body>
+    <div class="page-shell">
+      <div id="navbar-placeholder"></div>
+
+      <main class="page-main">
+        <section class="page-hero">
+          <span class="eyebrow">Compose</span>
+          <h1 class="page-title">
+            Build a new prompt request with a cleaner workflow.
+          </h1>
+          <p class="page-lead">
+            This compose page is ready for users who want to submit custom
+            prompt requests. It includes a structured form and a live preview
+            area you can later connect to your backend.
+          </p>
+        </section>
+
+        <section class="section-grid section-grid--2">
+          <article class="card">
+            <h2>Prompt Request Form</h2>
+            <form class="form-grid" id="compose-form">
+              <div class="field">
+                <label for="compose-title">Prompt Title</label>
+                <input
+                  id="compose-title"
+                  type="text"
+                  placeholder="Example: Product launch caption prompt"
+                />
+              </div>
+              <div class="field">
+                <label for="compose-category">Category</label>
+                <select id="compose-category">
+                  <option>Graphic Design</option>
+                  <option>Video Production</option>
+
+                  <option>Data Analysis</option>
+                  <option>Project Management</option>
+                  <option>Customer Support</option>
+
+                  <option>Academic Writing</option>
+                  <option>Language Learning</option>
+
+                  <option>Health & Fitness</option>
+                  <option>Travel Planning</option>
+                  <option>Personal Finance</option>
+                </select>
+              </div>
+              <div class="field">
+                <label for="compose-goal">Goal</label>
+                <textarea
+                  id="compose-goal"
+                  placeholder="Describe the result you want from this prompt..."
+                ></textarea>
+              </div>
+              <div class="field">
+                <label for="compose-tone">Tone Or Style</label>
+                <input
+                  id="compose-tone"
+                  type="text"
+                  placeholder="Modern, clear, persuasive, short-form"
+                />
+              </div>
+              <div class="field">
+                <label for="compose-keywords">Keywords</label>
+                <input
+                  id="compose-keywords"
+                  type="text"
+                  placeholder="instagram, launch, marketing, captions"
+                />
+                <p class="text-muted compose-helper">
+                  Write keywords separated by commas so the navbar search can
+                  find exact prompt possibilities.
+                </p>
+              </div>
+              <div class="button-row">
+                <button class="button" type="submit">
+                  Submit Prompt Request
+                </button>
+                <a class="button-secondary" href="/dashboard"
+                  >Open Admin Panel</a
+                >
+              </div>
+              <p id="compose-status" class="text-muted compose-status"></p>
+            </form>
+          </article>
+
+          <article class="card stack">
+            <div>
+              <h2>Preview Structure</h2>
+              <p>
+                A strong request usually includes the task, target audience,
+                desired tone, output length, and any formatting rules the final
+                prompt should follow.
+              </p>
+            </div>
+
+            <div>
+              <span class="pill">Starter Outline</span>
+              <p class="text-muted">
+                Create a prompt for [task] aimed at [audience]. Keep the tone
+                [tone]. Return the output in [format] and include [constraints].
+              </p>
+            </div>
+
+            <div>
+              <h3>Keyword Tip</h3>
+              <p class="text-muted">
+                Add clear keywords like <strong>instagram</strong>,
+                <strong>seo</strong>, <strong>coding</strong>, or
+                <strong>marketing</strong> so the search bar can return more
+                exact results.
+              </p>
+            </div>
+
+            <div class="button-row">
+              <a class="button-secondary" href="/post"
+                >View Sample Prompt Page</a
+              >
+            </div>
+          </article>
+        </section>
+
+        <section class="section-grid section-grid--2 compose-image-section">
+          <article class="card">
+            <h2>Image Prompt Upload</h2>
+            <form class="form-grid" id="image-prompt-form">
+              <div class="field">
+                <label for="image-prompt-title">Image Prompt Title</label>
+                <input
+                  id="image-prompt-title"
+                  type="text"
+                  placeholder="Example: Futuristic city poster prompt"
+                />
+              </div>
+              <div class="field">
+                <label for="image-prompt-category">Category</label>
+                <select id="image-prompt-category">
+                  <option>Image Generation</option>
+                  <option>Character Design</option>
+                  <option>Product Mockup</option>
+                  <option>Poster Design</option>
+                  <option>Social Media Creative</option>
+                  <option>Architecture</option>
+                  <option>Fashion</option>
+                  <option>Photography</option>
+                </select>
+              </div>
+              <div class="field">
+                <label for="image-prompt-file">Upload Image</label>
+                <input id="image-prompt-file" type="file" accept="image/*" />
+              </div>
+              <div class="field">
+                <label for="image-prompt-text">Prompt Below Image</label>
+                <textarea
+                  id="image-prompt-text"
+                  placeholder="Write the exact image generation prompt shown below the uploaded image..."
+                ></textarea>
+              </div>
+              <div class="field">
+                <label for="image-prompt-keywords">Keywords</label>
+                <input
+                  id="image-prompt-keywords"
+                  type="text"
+                  placeholder="cinematic, neon, product, realistic"
+                />
+              </div>
+              <div class="button-row">
+                <button class="button" type="submit">Upload Image Prompt</button>
+                <a class="button-secondary" href="/image">View Image Prompts</a>
+              </div>
+              <p id="image-prompt-status" class="text-muted compose-status"></p>
+            </form>
+          </article>
+
+          <article class="card stack">
+            <h2>Image Preview</h2>
+            <div class="image-upload-preview" id="image-upload-preview">
+              <span class="text-muted">Selected image preview appears here.</span>
+            </div>
+            <p class="text-muted compose-helper">
+              The image page will show each uploaded image with its generation
+              prompt placed directly below it.
+            </p>
+          </article>
+        </section>
+      </main>
+
+      <div id="footer-placeholder"></div>
+    </div>
+
+    <script src="/frontend/assets/js/components.js"></script>
+    <script src="/frontend/assets/js/compose.js"></script>
+  </body>
+</html>

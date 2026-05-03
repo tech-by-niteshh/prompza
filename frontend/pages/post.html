@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prompza Prompt Post</title>
+    <link rel="icon" href="/frontend/assets/logo/bg-removed.png" type="image/png">
+    <link rel="stylesheet" href="/frontend/assets/css/site.css">
+    <link rel="stylesheet" href="/frontend/assets/css/post.css">
+</head>
+
+<body>
+    <div class="page-shell">
+        <div id="navbar-placeholder"></div>
+
+        <main class="page-main">
+            <section class="page-hero">
+                <span class="eyebrow">Prompt Search</span>
+                <h1 class="page-title" id="search-results-title">Search prompts by keyword from the navigation bar.</h1>
+                <p class="page-lead" id="search-results-lead">
+                    Use the navbar search to scan saved prompts. Matching prompts will appear here with keywords and reusable prompt cards.
+                </p>
+            </section>
+
+            <section class="results-toolbar" aria-label="Search result summary">
+                <p class="results-toolbar__summary" id="results-count">Search for a keyword to see prompt cards here.</p>
+            </section>
+
+            <section class="results-grid" id="search-results">
+                <div class="empty-state">
+                    <h2 class="empty-state__title">No search yet</h2>
+                    <p class="text-muted empty-state__message">Start with a keyword like <strong>marketing</strong>, <strong>instagram</strong>, or <strong>content</strong>.</p>
+                </div>
+            </section>
+
+            <div class="load-more-row">
+                <button class="button load-more-button" id="load-more-results" type="button" hidden>Load More Prompts</button>
+            </div>
+        </main>
+
+        <div id="footer-placeholder"></div>
+    </div>
+
+    <script src="/frontend/assets/js/components.js"></script>
+    <script src="/frontend/assets/js/site.js"></script>
+    <script>
+        (() => {
+            const params = new URLSearchParams(window.location.search);
+            const query = (params.get("q") || "").trim();
+            const resultsRoot = document.getElementById("search-results");
+            const title = document.getElementById("search-results-title");
+            const lead = document.getElementById("search-results-lead");
+            const resultsCount = document.getElementById("results-count");
+            const loadMoreButton = document.getElementById("load-more-results");
+            const pageSize = 6;
+            let allPrompts = [];
+            let visibleCount = 0;
+
+            if (!query || !resultsRoot || !title || !lead || !resultsCount || !loadMoreButton) {
+                return;
+            }
+
+            title.textContent = `Results for "${query}"`;
+            lead.textContent = "These prompts matched your search keywords and were pulled from saved prompt records.";
+
+            const renderEmpty = () => {
+                resultsCount.textContent = "0 prompts found.";
+                loadMoreButton.hidden = true;
+                resultsRoot.innerHTML = `
+                    <div class="empty-state">
+                        <h2 class="empty-state__title">No matching prompts found</h2>
+                        <p class="text-muted empty-state__message">Try a broader keyword or add more prompts from the compose page.</p>
+                    </div>
+                `;
+            };
+
+            const buildPromptText = (prompt) => {
+                return String(prompt.goal || "").trim();
+            };
+
+            const buildCardBody = (prompt) => {
+                const matchedKeywords = Array.isArray(prompt.matchedKeywords) && prompt.matchedKeywords.length
+                    ? `Matched: ${prompt.matchedKeywords.join(", ")}`
+                    : "";
+                const details = [prompt.tone, matchedKeywords].filter(Boolean);
+
+                if (details.length) {
+                    return details.join(" • ");
+                }
+
+                return prompt.goal || "Reusable prompt card ready to copy.";
+            };
+
+            const updateLoadMoreState = () => {
+                const remaining = allPrompts.length - visibleCount;
+
+                if (remaining > 0) {
+                    loadMoreButton.hidden = false;
+                    loadMoreButton.textContent = `Load More Prompts (${remaining} left)`;
+                } else {
+                    loadMoreButton.hidden = true;
+                }
+            };
+
+            const renderResults = async () => {
+                resultsRoot.innerHTML = "";
+                const promptsToShow = allPrompts.slice(0, visibleCount);
+
+                if (!promptsToShow.length) {
+                    renderEmpty();
+                    return;
+                }
+
+                for (const prompt of promptsToShow) {
+                    try {
+                        const promptCard = await window.prompzaSite.createPromptCard({
+                            id: prompt._id,
+                            likes: prompt.likes || 0,
+                            category: prompt.category || "General",
+                            title: prompt.title,
+                            body: buildCardBody(prompt),
+                            prompt: buildPromptText(prompt),
+                        });
+                        resultsRoot.appendChild(promptCard);
+                    } catch (_error) {
+                        const fallback = document.createElement("div");
+                        fallback.className = "prompt-fallback";
+                        fallback.innerHTML = `
+                            <strong>${prompt.title}</strong>
+                            <p class="prompt-fallback__goal">${prompt.goal}</p>
+                        `;
+                        resultsRoot.appendChild(fallback);
+                    }
+                }
+
+                resultsCount.textContent = `Showing ${promptsToShow.length} of ${allPrompts.length} matching prompt${allPrompts.length === 1 ? "" : "s"}.`;
+                updateLoadMoreState();
+            };
+
+            const loadResults = async () => {
+                try {
+                    const response = await fetch(`/api/prompts/search?q=${encodeURIComponent(query)}`);
+                    const data = await response.json();
+
+                    if (!response.ok) {
+                        throw new Error(data.error || "Failed to load prompt search results.");
+                    }
+
+                    if (!data.prompts || !data.prompts.length) {
+                        renderEmpty();
+                        return;
+                    }
+
+                    allPrompts = data.prompts;
+                    visibleCount = Math.min(pageSize, allPrompts.length);
+                    await renderResults();
+                } catch (error) {
+                    resultsCount.textContent = "Search failed.";
+                    loadMoreButton.hidden = true;
+                    resultsRoot.innerHTML = `
+                        <div class="empty-state">
+                            <h2 class="empty-state__title">Search failed</h2>
+                            <p class="text-muted empty-state__message">${error.message}</p>
+                        </div>
+                    `;
+                } finally {
+                    window.dispatchEvent(new CustomEvent("prompza:loader-complete"));
+                }
+            };
+
+            loadMoreButton.addEventListener("click", async () => {
+                visibleCount = Math.min(visibleCount + pageSize, allPrompts.length);
+                await renderResults();
+            });
+
+            if (window.prompzaSite && typeof window.prompzaSite.createPromptCard === "function") {
+                loadResults();
+            } else {
+                window.addEventListener("load", loadResults, { once: true });
+            }
+        })();
+    </script>
+</body>
+
+</html>

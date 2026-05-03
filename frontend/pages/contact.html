@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prompza Contact</title>
+    <link rel="icon" href="/frontend/assets/logo/bg-removed.png" type="image/png">
+    <link rel="stylesheet" href="/frontend/assets/css/site.css">
+    <link rel="stylesheet" href="/frontend/assets/css/contact.css">
+</head>
+
+<body>
+    <div class="page-shell">
+        <div id="navbar-placeholder"></div>
+
+        <main class="page-main">
+            <section class="page-hero">
+                <span class="eyebrow">Contact Us</span>
+                <h1 class="page-title">Let’s connect with Prompza.</h1>
+                <p class="page-lead">
+                    Use the forms below to request a prompt or send a direct message. Both forms are connected to your backend bot notifications so you can respond quickly.
+                </p>
+            </section>
+
+            <section class="contact-socials" aria-label="Social links">
+                <a class="contact-social-link" href="https://instagram.com/" target="_blank" rel="noreferrer">
+                    <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                        <rect x="3.5" y="3.5" width="17" height="17" rx="5" stroke="currentColor" stroke-width="1.8"></rect>
+                        <circle cx="12" cy="12" r="4" stroke="currentColor" stroke-width="1.8"></circle>
+                        <circle cx="17.3" cy="6.7" r="1.1" fill="currentColor"></circle>
+                    </svg>
+                    <span>Instagram</span>
+                </a>
+                <a class="contact-social-link" href="https://t.me/prompza" target="_blank" rel="noreferrer">
+                    <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                        <path d="M20.2 4.6 3.8 10.9c-.8.3-.8 1.4 0 1.6l4.2 1.3 1.6 5c.2.7 1.1.8 1.5.3l2.5-3 4.9 3.6c.6.4 1.4.1 1.5-.6l2.3-13c.1-.9-.7-1.6-1.6-1.3Z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"></path>
+                        <path d="m8 13.8 9.8-7.4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"></path>
+                    </svg>
+                    <span>Telegram</span>
+                </a>
+                <a class="contact-social-link" href="#prompt-request-form">Request A Prompt</a>
+            </section>
+
+            <section class="section-grid section-grid--2 contact-forms">
+                <section class="card" id="prompt-request-form">
+                    <h2>Request A Prompt</h2>
+                    <p class="text-muted">Send a structured prompt request directly from this page.</p>
+                    <form class="form-grid" id="prompt-request-contact-form">
+                        <div class="field">
+                            <label for="request-name">Name</label>
+                            <input id="request-name" type="text" placeholder="Your name">
+                        </div>
+                        <div class="field">
+                            <label for="request-email">Email</label>
+                            <input id="request-email" type="email" placeholder="you@example.com">
+                        </div>
+                        <div class="field">
+                            <label for="request-type">Request Type</label>
+                            <select id="request-type">
+                                <option value="Instagram Prompt">Instagram Prompt</option>
+                                <option value="Marketing Prompt">Marketing Prompt</option>
+                                <option value="Business Prompt">Business Prompt</option>
+                                <option value="Custom Prompt Bot">Custom Prompt Bot</option>
+                            </select>
+                        </div>
+                        <div class="field">
+                            <label for="request-message">Prompt Request Details</label>
+                            <textarea id="request-message" placeholder="Describe the prompt you want, the goal, tone, and where you want to use it."></textarea>
+                        </div>
+                        <p class="contact-status" id="request-form-status" aria-live="polite"></p>
+                        <div class="button-row">
+                            <button class="button" type="submit">Send Prompt Request</button>
+                        </div>
+                    </form>
+                </section>
+
+                <section class="card">
+                    <h2>Send A Message</h2>
+                    <p class="text-muted">Send a direct message with your name, email, and topic.</p>
+                    <form class="form-grid" id="contact-message-form">
+                        <div class="field">
+                            <label for="contact-name">Name</label>
+                            <input id="contact-name" type="text" placeholder="Your name">
+                        </div>
+                        <div class="field">
+                            <label for="contact-email">Email</label>
+                            <input id="contact-email" type="email" placeholder="you@example.com">
+                        </div>
+                        <div class="field">
+                            <label for="contact-topic">Topic</label>
+                            <select id="contact-topic">
+                                <option value="user_message">General Question</option>
+                                <option value="support_message">Support</option>
+                                <option value="business_inquiry">Business Inquiry</option>
+                                <option value="feedback_message">Feedback</option>
+                            </select>
+                        </div>
+                        <div class="field">
+                            <label for="contact-message">Message</label>
+                            <textarea id="contact-message" placeholder="Write your message here..."></textarea>
+                        </div>
+                        <p class="contact-status" id="message-form-status" aria-live="polite"></p>
+                        <div class="button-row">
+                            <button class="button" type="submit">Send Message</button>
+                        </div>
+                    </form>
+                </section>
+            </section>
+        </main>
+
+        <div id="footer-placeholder"></div>
+    </div>
+
+    <script src="/frontend/assets/js/components.js"></script>
+    <script src="/frontend/assets/js/contact.js"></script>
+</body>
+
+</html>
